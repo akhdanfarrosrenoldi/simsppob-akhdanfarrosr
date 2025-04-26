@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="id">
   <head>
-    <title>SIM PPOB Homepage</title>
+    <title>SIMS PPOB Homepage</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -80,7 +80,7 @@
         <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="<?= session()->get('isLoggedIn') ? base_url('home') : base_url('registration') ?>">
   <img src="<?= base_url(); ?>/assets/images/Logo.png" alt="Logo" style="width: 40px; height: 40px; margin-right: 10px;">
-  SIM PPOB
+  SIMS PPOB
 </a>
 
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
@@ -103,9 +103,8 @@
           <div class="col-md-6 mb-4">
             <div class="card p-4">
               <div class="text-left">
-                <img src="<?= $profile['profile_image'] ?>" alt="Profile Image" class="img-fluid rounded-circle mb-3" style="width: 150px;">
-                <h4>Selamat datang, <?= $profile['first_name'] ?> <?= $profile['last_name'] ?></h4>
-                <p>Email: <?= $profile['email'] ?></p>
+              <img src="<?= $profile['profile_image'] ?>" alt="Profile Image" class="img-fluid rounded-circle mb-3" style="width: 100px;">
+              <h4>Selamat datang, <?= $profile['first_name'] ?> <?= $profile['last_name'] ?></h4>
               </div>
             </div>
           </div>
