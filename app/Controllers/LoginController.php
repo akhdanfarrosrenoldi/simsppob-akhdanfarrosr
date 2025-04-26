@@ -9,6 +9,11 @@ class LoginController extends Controller
 {
     public function index()
     {
+        // Kalau sudah login, langsung ke home
+        if (session()->get('isLoggedIn')) {
+            return redirect()->to('/home');
+        }
+
         return view('login');
     }
 
@@ -47,7 +52,7 @@ class LoginController extends Controller
             // Cek apakah login berhasil
             if (isset($result['status']) && $result['status'] === 0) {
                 // Simpan token JWT ke session
-                session()->set('logged_in', true);
+                session()->set('isLoggedIn', true);
                 session()->set('token', $result['data']['token']);
                 return redirect()->to('/home'); // Arahkan ke homepage
             } else {
@@ -62,7 +67,7 @@ class LoginController extends Controller
 
     public function logout()
     {
-        session()->destroy(); // Menghapus session
+        session()->destroy(); // Menghapus semua session
         return redirect()->to('/login'); // Arahkan ke halaman login setelah logout
     }
 }

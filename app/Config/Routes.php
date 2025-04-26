@@ -5,18 +5,22 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Home::index');
 
-// Routes untuk Registration
-$routes->get('registration', 'RegistrationController::index');
-$routes->post('registration/register', 'RegistrationController::register');
+// Ubah route untuk halaman utama agar langsung mengarah ke registration
+$routes->get('/', 'RegistrationController::index'); // Halaman pertama langsung ke registration
 
-// Routes untuk Login
-$routes->get('login', 'LoginController::index');
-$routes->post('login', 'LoginController::authenticate');
+// Routes untuk registrasi
+$routes->get('registration', 'RegistrationController::index'); // Menampilkan form registrasi
+$routes->post('registration/register', 'RegistrationController::register'); // Proses registrasi
 
-// Route Logout (GET method)
-$routes->get('logout', 'LoginController::logout'); // Gunakan GET untuk logout
+// Routes untuk login
+$routes->get('login', 'LoginController::index'); // Menampilkan form login
+$routes->post('login', 'LoginController::authenticate'); // Proses autentikasi login
 
-// Routes untuk Homepage
-$routes->get('home', 'HomepageController::index');
+// Route untuk homepage
+$routes->get('home', 'HomepageController::index');  // Route ke homepage setelah login
+
+// Route untuk logout
+$routes->get('logout', 'LoginController::logout'); // Logout user
+
+$routes->get('topup', 'TopupController::index');

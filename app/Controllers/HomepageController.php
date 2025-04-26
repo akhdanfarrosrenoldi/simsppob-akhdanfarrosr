@@ -3,25 +3,24 @@
 namespace App\Controllers;
 
 use CodeIgniter\Controller;
-use Config\Services;
 
 class HomepageController extends Controller
 {
     public function index()
     {
+        // Cek kalau belum login
+        if (!session()->get('isLoggedIn')) {
+            return redirect()->to('/login');
+        }
+
         // Ambil token dari session
         $token = session()->get('token');
-        
-        // Pastikan token tersedia
-        if (!$token) {
-            return redirect()->to('/login'); // Redirect ke halaman login jika token tidak ada
-        }
 
         // Mendapatkan data profil, saldo, layanan, dan banner
         $profile = $this->getProfile($token);
         $balance = $this->getBalance($token);
         $services = $this->getServices($token);
-        $banners = $this->getBanners();
+        $banners = $this->getBanners($token);
 
         // Kirim data ke view
         return view('homepage', [
@@ -34,34 +33,26 @@ class HomepageController extends Controller
 
     private function getProfile($token)
     {
-        $url = 'https://take-home-test-api.nutech-integrasi.com/profile'; // API URL yang benar
-        $response = $this->sendRequest($url, $token);
-
-        return $response['data'] ?? null;
+        $url = 'https://take-home-test-api.nutech-integrasi.com/profile';
+        return $this->sendRequest($url, $token)['data'] ?? null;
     }
 
     private function getBalance($token)
     {
-        $url = 'https://take-home-test-api.nutech-integrasi.com/balance'; // API URL yang benar
-        $response = $this->sendRequest($url, $token);
-
-        return $response['data'] ?? null;
+        $url = 'https://take-home-test-api.nutech-integrasi.com/balance';
+        return $this->sendRequest($url, $token)['data'] ?? null;
     }
 
     private function getServices($token)
     {
-        $url = 'https://take-home-test-api.nutech-integrasi.com/services'; // API URL yang benar
-        $response = $this->sendRequest($url, $token);
-
-        return $response['data'] ?? [];
+        $url = 'https://take-home-test-api.nutech-integrasi.com/services';
+        return $this->sendRequest($url, $token)['data'] ?? [];
     }
 
-    private function getBanners()
+    private function getBanners($token)
     {
-        $url = 'https://take-home-test-api.nutech-integrasi.com/banner'; // API URL yang benar
-        $response = $this->sendRequest($url);
-
-        return $response['data'] ?? [];
+        $url = 'https://take-home-test-api.nutech-integrasi.com/banner';
+        return $this->sendRequest($url, $token)['data'] ?? [];
     }
 
     private function sendRequest($url, $token = null)
@@ -71,11 +62,11 @@ class HomepageController extends Controller
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         // Menambahkan token pada header jika ada
+        $headers = ['Content-Type: application/json'];
         if ($token) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Authorization: Bearer ' . $token
-            ]);
+            $headers[] = 'Authorization: Bearer ' . $token;
         }
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         $response = curl_exec($ch);
 

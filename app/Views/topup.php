@@ -28,24 +28,6 @@
         margin-right: 20px;
         font-size: 16px;
       }
-      /* Service Row */
-      .services-row {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding-bottom: 10px;
-      }
-      .service-card {
-        flex: 0 0 auto;
-        width: 100px;
-        margin-right: 10px;
-        text-align: center;
-      }
-      .service-card img {
-        width: 50px;
-        height: 50px;
-        object-fit: contain;
-      }
       /* Card Style */
       .card {
         max-height: 350px;
@@ -57,11 +39,6 @@
       .card-body {
         padding: 20px;
       }
-      .carousel-item img {
-        height: 200px;
-        object-fit: cover;
-      }
-
       /* Flexbox for equal card height */
       .row-equal .col-md-6 {
         display: flex;
@@ -120,41 +97,6 @@
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- Services -->
-        <div class="services-row mt-4">
-          <?php foreach ($services as $service): ?>
-            <div class="service-card">
-              <img src="<?= $service['service_icon'] ?>" alt="<?= $service['service_name'] ?>">
-              <h6 class="mt-2"><?= $service['service_name'] ?></h6>
-              <!-- Harga tidak ditampilkan -->
-            </div>
-          <?php endforeach; ?>
-        </div>
-
-        <!-- Banner -->
-        <h3 class="mt-5">Temukan Promo Menarik</h3>
-        <div id="bannerCarousel" class="carousel slide" data-ride="carousel">
-          <div class="carousel-inner">
-            <?php foreach ($banners as $index => $banner): ?>
-              <div class="carousel-item <?= $index == 0 ? 'active' : '' ?>">
-                <img src="<?= $banner['banner_image'] ?>" class="d-block w-100" alt="<?= $banner['banner_name'] ?>">
-                <div class="carousel-caption d-none d-md-block">
-                  <h5><?= $banner['banner_name'] ?></h5>
-                  <p><?= $banner['description'] ?></p>
-                </div>
-              </div>
-            <?php endforeach; ?>
-          </div>
-          <a class="carousel-control-prev" href="#bannerCarousel" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-          </a>
-          <a class="carousel-control-next" href="#bannerCarousel" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-          </a>
         </div>
       </div>
     </section>
