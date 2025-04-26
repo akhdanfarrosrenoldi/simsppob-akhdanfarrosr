@@ -22,6 +22,68 @@
       background: #f8f9fa;
       border-radius: 10px;
     }
+
+     /* Navbar style */
+     .navbar {
+        padding: 0;
+        height: 100px;
+        align-items: center;
+      }
+      .navbar-brand {
+        font-weight: bold;
+        font-size: 24px;
+        color: black;
+        margin-left: 20px;
+      }
+      .navbar-nav .nav-link {
+        font-weight: bold;
+        color: black !important;
+        margin-right: 20px;
+        font-size: 16px;
+      }
+      /* Service Row */
+      .services-row {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 10px;
+      }
+      .service-card {
+        flex: 0 0 auto;
+        width: 100px;
+        margin-right: 10px;
+        text-align: center;
+      }
+      .service-card img {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+      }
+      /* Card Style */
+      .card {
+        max-height: 350px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+      }
+      .card-body {
+        padding: 20px;
+      }
+      .carousel-item img {
+        height: 200px;
+        object-fit: cover;
+      }
+
+      /* Flexbox for equal card height */
+      .row-equal .col-md-6 {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+      }
+      .row-equal .card {
+        flex: 1;
+      }
   </style>
 </head>
 
@@ -88,6 +150,27 @@
     </div>
   </section>
 
+  <!-- Modal for confirmation -->
+  <div class="modal" tabindex="-1" role="dialog" id="confirmModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Konfirmasi Top Up</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Apakah Anda yakin ingin melakukan top up sebesar <span id="confirmAmount"></span>?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Batalkan</button>
+          <button type="button" class="btn btn-primary" id="confirmTopUp">Ya, Top Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- JS -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
@@ -117,10 +200,18 @@
     });
   });
 
- // Proses Top Up
-document.getElementById('btnSubmit').addEventListener('click', function () {
-  const nominal = parseInt(document.getElementById('nominal').value);
-  if (nominal >= 10000 && nominal <= 1000000) {
+  // Show confirmation modal
+  document.getElementById('btnSubmit').addEventListener('click', function () {
+    const nominal = parseInt(document.getElementById('nominal').value);
+    if (nominal >= 10000 && nominal <= 1000000) {
+      document.getElementById('confirmAmount').textContent = 'Rp ' + nominal.toLocaleString('id-ID');
+      $('#confirmModal').modal('show');
+    }
+  });
+
+  // Confirm top-up
+  document.getElementById('confirmTopUp').addEventListener('click', function () {
+    const nominal = parseInt(document.getElementById('nominal').value);
     $.ajax({
       url: '<?= base_url('topup/topUp') ?>',
       method: 'POST',
@@ -147,10 +238,10 @@ document.getElementById('btnSubmit').addEventListener('click', function () {
         alert('Terjadi kesalahan pada server.');
       }
     });
-  }
-});
+    $('#confirmModal').modal('hide');
+  });
 
-</script>
+  </script>
 
 </body>
 </html>
