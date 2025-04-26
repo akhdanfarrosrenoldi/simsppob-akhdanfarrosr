@@ -62,7 +62,7 @@ class LoginController extends Controller
 
     public function logout()
     {
-        session()->destroy();
-        return redirect()->to('/login');
+        session()->destroy(); // Menghapus session
+        return redirect()->to('/login'); // Arahkan ke halaman login setelah logout
     }
 }

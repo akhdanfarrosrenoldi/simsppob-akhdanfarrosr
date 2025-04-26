@@ -42,7 +42,7 @@ class RegistrationController extends Controller
         }
 
         // Kirim data ke API eksternal untuk registrasi
-        $client = \Config\Services::curlrequest();
+        $client = Services::curlrequest();
         try {
             $response = $client->post('https://take-home-test-api.nutech-integrasi.com/registration', [
                 'headers' => ['Content-Type' => 'application/json'],

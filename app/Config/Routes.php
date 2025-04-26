@@ -7,12 +7,16 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 
+// Routes untuk Registration
 $routes->get('registration', 'RegistrationController::index');
 $routes->post('registration/register', 'RegistrationController::register');
 
+// Routes untuk Login
 $routes->get('login', 'LoginController::index');
 $routes->post('login', 'LoginController::authenticate');
-$routes->get('logout', 'LoginController::logout');
 
+// Route Logout (GET method)
+$routes->get('logout', 'LoginController::logout'); // Gunakan GET untuk logout
 
-$routes->get('home', 'HomeController::index'); // Homepage setelah login
+// Routes untuk Homepage
+$routes->get('home', 'HomepageController::index');
