@@ -71,7 +71,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <?php foreach ($banners as $banner): ?>
             <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden">
-                <img src="<?= $banner['banner_image'] ?>" alt="<?= $banner['banner_name'] ?>" class="w-full object-cover rounded-xl">
+                <img src="<?= $banner['banner_image'] ?>" alt="<?= $banner['banner_name'] ?>" class="w-full h-48 object-cover rounded-xl">
             </div>
         <?php endforeach; ?>
     </div>
