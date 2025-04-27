@@ -6,21 +6,24 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-// Ubah route untuk halaman utama agar langsung mengarah ke registration
-$routes->get('/', 'RegistrationController::index'); // Halaman pertama langsung ke registration
 
-// Routes untuk registrasi
-$routes->get('registration', 'RegistrationController::index'); // Menampilkan form registrasi
-$routes->post('registration/register', 'RegistrationController::register'); // Proses registrasi
+$routes->get('/', 'RegistrationController::index'); 
 
-// Routes untuk login
-$routes->get('login', 'LoginController::index'); // Menampilkan form login
-$routes->post('login', 'LoginController::authenticate'); // Proses autentikasi login
+$routes->get('registration', 'RegistrationController::index'); 
+$routes->post('registration/register', 'RegistrationController::register'); 
 
-// Route untuk homepage
-$routes->get('home', 'HomepageController::index');  // Route ke homepage setelah login
+$routes->get('login', 'LoginController::index'); 
+$routes->post('login', 'LoginController::authenticate'); 
 
-// Route untuk logout
-$routes->get('logout', 'LoginController::logout'); // Logout user
+
+$routes->get('home', 'HomepageController::index');  
+
+
+$routes->get('logout', 'LoginController::logout'); 
 
 $routes->get('topup', 'TopupController::index');
+
+$routes->get('/history', 'HistoryController::index');
+$routes->get('/history/loadMoreHistory', 'HistoryController::loadMoreHistory');
+
+

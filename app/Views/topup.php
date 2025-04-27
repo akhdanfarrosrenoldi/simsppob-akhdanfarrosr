@@ -98,8 +98,8 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item"><a href="<?= base_url('topup') ?>" class="nav-link">Top Up</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">Transaction</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">Akun</a></li>
+            <li class="nav-item"><a href="<?= base_url('history') ?>" class="nav-link">Transaction</a></li>
+            <li class="nav-item"><a href="<?= base_url('profile') ?>" class="nav-link">Akun</a></li>
             <li class="nav-item"><a href="<?= base_url('logout') ?>" class="nav-link">Log Out</a></li>
           </ul>
         </div>
