@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SIMS PPOB - Edit Profile</title>
+  <title>SIMS PPOB - Akhdan</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 min-h-screen">
 <!-- Navbar -->
 <nav class="bg-white shadow-sm">
   <div class="container mx-auto flex justify-between items-center px-6 py-4">
@@ -66,6 +66,20 @@
   </div>
 </div>
 
+<!-- Modal Notifikasi -->
+<div id="notificationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div id="modalContent" class="bg-white p-8 rounded-xl shadow-xl w-full max-w-md text-center transform transition-all scale-95 opacity-0">
+    <div id="modalIcon" class="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-green-500">
+      <svg id="iconSvg" class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path id="iconPath" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="" />
+      </svg>
+    </div>
+    <h2 id="notificationTitle" class="text-2xl font-bold mb-2"></h2>
+    <p id="notificationMessage" class="text-gray-600 mb-6"></p>
+    <button onclick="closeModal()" class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">OK</button>
+  </div>
+</div>
+
 <!-- Script -->
 <script>
 function uploadImage() {
@@ -76,8 +90,8 @@ function updateProfileImage(event) {
   const file = event.target.files[0];
   if (!file) return;
 
-  if (file.size > 100 * 1024) { // maksimal 100KB
-    alert('Ukuran file maksimal 100 KB.');
+  if (file.size > 100 * 1024) {
+    showModal('Gagal', 'Ukuran file maksimal 100 KB.', false);
     return;
   }
 
@@ -86,27 +100,24 @@ function updateProfileImage(event) {
 
   fetch('<?= base_url('profile/image'); ?>', {
     method: 'POST',
-    headers: {
-      'X-HTTP-Method-Override': 'PUT'
-    },
+    headers: { 'X-HTTP-Method-Override': 'PUT' },
     body: formData
   })
   .then(response => response.json())
   .then(data => {
     if (data.status === 0) {
       document.getElementById('profileImage').src = data.data.profile_image;
-      alert('Foto profil berhasil diperbarui!');
+      showModal('Berhasil', 'Foto profil berhasil diperbarui!', true);
     } else {
-      alert(data.message || 'Gagal update foto.');
+      showModal('Gagal', data.message || 'Gagal update foto.', false);
     }
   })
   .catch(error => {
     console.error('Error:', error);
-    alert('Gagal upload foto.');
+    showModal('Error', 'Gagal upload foto.', false);
   });
 }
 
-// Edit Nama Depan / Belakang
 document.getElementById('editProfileForm').addEventListener('submit', function(e) {
   e.preventDefault();
 
@@ -114,34 +125,63 @@ document.getElementById('editProfileForm').addEventListener('submit', function(e
   const lastName = document.getElementById('last_name').value.trim();
 
   if (!firstName || !lastName) {
-    alert('Nama depan dan belakang harus diisi.');
+    showModal('Gagal', 'Nama depan dan belakang harus diisi.', false);
     return;
   }
 
   fetch('<?= base_url('profile/update'); ?>', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      first_name: firstName,
-      last_name: lastName
-    })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ first_name: firstName, last_name: lastName })
   })
   .then(response => response.json())
   .then(data => {
     if (data.status === 0) {
-      alert('Profil berhasil diperbarui!');
-      window.location.href = "<?= base_url('profile'); ?>";
+      showModal('Berhasil', 'Profil berhasil diperbarui!', true);
+      setTimeout(() => window.location.href = "<?= base_url('profile'); ?>", 1500);
     } else {
-      alert(data.message || 'Gagal update profil.');
+      showModal('Gagal', data.message || 'Gagal update profil.', false);
     }
   })
   .catch(error => {
     console.error('Error:', error);
-    alert('Terjadi kesalahan saat update.');
+    showModal('Error', 'Terjadi kesalahan saat update.', false);
   });
 });
+
+function showModal(title, message, success) {
+  document.getElementById('notificationTitle').innerText = title;
+  document.getElementById('notificationMessage').innerText = message;
+
+  const iconBg = document.getElementById('modalIcon');
+  const iconPath = document.getElementById('iconPath');
+
+  if (success) {
+    iconBg.className = 'w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-green-500';
+    iconPath.setAttribute('d', 'M5 13l4 4L19 7');
+  } else {
+    iconBg.className = 'w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-red-500';
+    iconPath.setAttribute('d', 'M6 18L18 6M6 6l12 12');
+  }
+
+  const modal = document.getElementById('notificationModal');
+  const content = document.getElementById('modalContent');
+  modal.classList.remove('hidden');
+  setTimeout(() => {
+    content.classList.remove('scale-95', 'opacity-0');
+    content.classList.add('scale-100', 'opacity-100');
+  }, 50);
+}
+
+function closeModal() {
+  const modal = document.getElementById('notificationModal');
+  const content = document.getElementById('modalContent');
+  content.classList.add('scale-95', 'opacity-0');
+  content.classList.remove('scale-100', 'opacity-100');
+  setTimeout(() => {
+    modal.classList.add('hidden');
+  }, 200);
+}
 </script>
 
 </body>

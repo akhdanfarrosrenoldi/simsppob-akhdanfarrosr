@@ -3,24 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIMS PPOB - Homepage</title>
+    <title>SIMS PPOB - Akhdan</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-white text-gray-800">
 
 <!-- Navbar -->
 <nav class="bg-white shadow-sm">
-    <div class="container mx-auto flex justify-between items-center px-6 py-4">
-        <div class="flex items-center space-x-2">
-            <img src="<?= base_url('assets/images/Logo.png') ?>" alt="Logo" class="w-8 h-8">
-            <span class="font-bold text-lg">SIMS PPOB</span>
-        </div>
-        <div class="flex space-x-8 font-semibold">
-            <a href="<?= base_url('topup') ?>" class="hover:text-red-500">Top Up</a>
-            <a href="<?= base_url('history') ?>" class="hover:text-red-500">Transaction</a>
-            <a href="<?= base_url('profile') ?>" class="hover:text-red-500">Akun</a>
-        </div>
+  <div class="container mx-auto flex justify-between items-center px-6 py-4">
+    <div class="flex items-center space-x-2">
+      <a href="<?= base_url('home') ?>" class="flex items-center space-x-2">
+        <img src="<?= base_url('assets/images/Logo.png') ?>" alt="Logo" class="w-8 h-8">
+        <span class="font-bold text-lg">SIMS PPOB</span>
+      </a>
     </div>
+    <div class="flex space-x-8 font-semibold">
+      <a href="<?= base_url('topup') ?>" class="hover:text-red-500">Top Up</a>
+      <a href="<?= base_url('history') ?>" class="hover:text-red-500">Transaction</a>
+      <a href="<?= base_url('profile') ?>" class="hover:text-red-500">Akun</a>
+    </div>
+  </div>
 </nav>
 
 <!-- Main Content -->
@@ -64,20 +66,17 @@
     </div>
 
     <!-- Banners -->
-    <div class="mt-14">
-        <h3 class="text-xl font-bold mb-6">Temukan promo menarik</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <?php foreach ($banners as $banner): ?>
-                <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden">
-                    <img src="<?= $banner['banner_image'] ?>" alt="<?= $banner['banner_name'] ?>" class="w-full h-32 object-cover">
-                    <div class="p-4">
-                        <h5 class="text-md font-bold"><?= esc($banner['banner_name']) ?></h5>
-                        <p class="text-sm text-gray-600"><?= esc($banner['description']) ?></p>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
+<div class="mt-14">
+    <h3 class="text-xl font-bold mb-6">Temukan promo menarik</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <?php foreach ($banners as $banner): ?>
+            <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden">
+                <img src="<?= $banner['banner_image'] ?>" alt="<?= $banner['banner_name'] ?>" class="w-full object-cover rounded-xl">
+            </div>
+        <?php endforeach; ?>
     </div>
+</div>
+
 
 </div>
 

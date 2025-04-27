@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SIMS PPOB - Login</title>
+  <title>SIMS PPOB - Akhdan</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css" rel="stylesheet">
 </head>

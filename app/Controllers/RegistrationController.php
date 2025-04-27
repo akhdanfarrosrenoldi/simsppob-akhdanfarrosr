@@ -64,12 +64,7 @@ class RegistrationController extends Controller
             log_message('error', 'Registration API HTTP Error: ' . $e->getMessage());
             return redirect()->back()
                 ->withInput()
-                ->with('errors', ['server' => 'Server lambat atau tidak merespon. Silakan coba lagi.']);
-        } catch (\Exception $e) {
-            log_message('error', 'Registration API Error: ' . $e->getMessage());
-            return redirect()->back()
-                ->withInput()
-                ->with('errors', ['server' => 'Gagal terhubung ke server. Silakan coba lagi nanti.']);
-        }
+                ->with('errors', ['server' => 'Email sudah terdaftar.']);
+        } 
     }
 }

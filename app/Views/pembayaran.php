@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pembayaran - SIMS PPOB</title>
+  <title>SIMS PPOB - Akhdan</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
@@ -12,19 +12,20 @@
 
 <!-- Navbar -->
 <nav class="bg-white shadow-sm">
-    <div class="container mx-auto flex justify-between items-center px-6 py-4">
-        <div class="flex items-center space-x-2">
-            <img src="<?= base_url('assets/images/Logo.png') ?>" alt="Logo" class="w-8 h-8">
-            <span class="font-bold text-lg">SIMS PPOB</span>
-        </div>
-        <div class="flex space-x-8 font-semibold">
-            <a href="<?= base_url('topup') ?>" class="hover:text-red-500">Top Up</a>
-            <a href="<?= base_url('history') ?>" class="hover:text-red-500">Transaction</a>
-            <a href="<?= base_url('profile') ?>" class="hover:text-red-500">Akun</a>
-        </div>
+  <div class="container mx-auto flex justify-between items-center px-6 py-4">
+    <div class="flex items-center space-x-2">
+      <a href="<?= base_url('home') ?>" class="flex items-center space-x-2">
+        <img src="<?= base_url('assets/images/Logo.png') ?>" alt="Logo" class="w-8 h-8">
+        <span class="font-bold text-lg">SIMS PPOB</span>
+      </a>
     </div>
+    <div class="flex space-x-8 font-semibold">
+      <a href="<?= base_url('topup') ?>" class="hover:text-red-500">Top Up</a>
+      <a href="<?= base_url('history') ?>" class="hover:text-red-500">Transaction</a>
+      <a href="<?= base_url('profile') ?>" class="hover:text-red-500">Akun</a>
+    </div>
+  </div>
 </nav>
-
 
 <!-- Main Content -->
 <div class="container mx-auto px-6 py-10">
