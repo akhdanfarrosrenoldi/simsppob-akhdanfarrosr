@@ -16,47 +16,47 @@ class TopUpController extends Controller
         $profile = $this->getProfile($token);
         $balance = $this->getBalance($token);
 
-        return view('topup', [
-            'profile' => $profile,
-            'balance' => $balance
-        ]);
+        return view('topup', compact('profile', 'balance'));
     }
 
     public function topUp()
     {
         $token = session()->get('token');
         if (!$token) {
-            return $this->response->setJSON(['status' => 401, 'message' => 'Unauthorized']);
+            return $this->response->setJSON([
+                'status' => 401,
+                'message' => 'Unauthorized'
+            ]);
         }
 
-        $request = $this->request->getJSON();
-        $topUpAmount = $request->top_up_amount ?? null;
+        $request = $this->request->getJSON(true);
+        $topUpAmount = $request['top_up_amount'] ?? null;
 
-        if ($topUpAmount === null || !is_numeric($topUpAmount) || $topUpAmount < 10000 || $topUpAmount > 1000000) {
+        if (is_null($topUpAmount) || !is_numeric($topUpAmount) || $topUpAmount < 10000 || $topUpAmount > 1000000) {
             return $this->response->setJSON([
-                'status' => 102,
+                'status'  => 102,
                 'message' => 'Nominal top up harus antara 10.000 dan 1.000.000',
-                'data' => null
+                'data'    => null
             ]);
         }
 
         $url = 'https://take-home-test-api.nutech-integrasi.com/topup';
-        $response = $this->sendRequest($url, $token, ['top_up_amount' => (int) $topUpAmount]);
+        $response = $this->sendRequest($url, $token, ['top_up_amount' => (int)$topUpAmount]);
 
         log_message('debug', 'API TopUp Response: ' . json_encode($response));
 
         if (isset($response['status']) && $response['status'] === 0) {
             return $this->response->setJSON([
-                'status' => 0,
+                'status'  => 0,
                 'message' => 'Top Up berhasil!',
-                'data' => $response['data']
+                'data'    => $response['data']
             ]);
         }
 
         return $this->response->setJSON([
-            'status' => 500,
-            'message' => 'Terjadi kesalahan saat proses top up',
-            'data' => null
+            'status'  => 500,
+            'message' => $response['message'] ?? 'Terjadi kesalahan saat proses top up',
+            'data'    => null
         ]);
     }
 
@@ -77,11 +77,14 @@ class TopUpController extends Controller
     private function sendRequest($url, $token, $data = [])
     {
         $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+
+        $headers = [
             'Authorization: Bearer ' . $token,
             'Content-Type: application/json'
-        ]);
+        ];
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         if (!empty($data)) {
             curl_setopt($ch, CURLOPT_POST, true);
@@ -91,6 +94,7 @@ class TopUpController extends Controller
         $response = curl_exec($ch);
 
         if (curl_errno($ch)) {
+            log_message('error', 'CURL Error TopUpController: ' . curl_error($ch));
             curl_close($ch);
             return ['status' => 500, 'message' => 'Request error'];
         }

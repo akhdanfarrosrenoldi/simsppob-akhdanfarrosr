@@ -1,224 +1,159 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <title>SIMS PPOB Transaction History</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  
-  <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="<?= base_url(); ?>/assets/css/style.css">
-  <style>
-    .navbar {
-      padding: 0;
-      height: 100px;
-      align-items: center;
-    }
-    .navbar-brand {
-      font-weight: bold;
-      font-size: 24px;
-      color: black;
-      margin-left: 20px;
-    }
-    .navbar-nav .nav-link {
-      font-weight: bold;
-      color: black !important;
-      margin-right: 20px;
-      font-size: 16px;
-    }
-    .card {
-      margin-bottom: 20px;
-    }
-    .transaction-item {
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-    }
-    .btn-group .btn {
-      margin-right: 10px;
-      border: none;
-    }
-    .month-btn.active {
-      background-color: #007bff;
-      color: white;
-    }
-    .btn-show-more {
-      background-color: #dc3545; 
-      color: white;
-    }
-    .btn-show-more:hover {
-      background-color: #c82333;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>History - SIMS PPOB</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<section class="ftco-section">
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="<?= session()->get('isLoggedIn') ? base_url('home') : base_url('registration') ?>">
-        <img src="<?= base_url(); ?>/assets/images/Logo.png" alt="Logo" style="width: 40px; height: 40px; margin-right: 10px;">
-        SIMS PPOB
-      </a>
+<body class="bg-gray-50 min-h-screen">
 
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-        <span class="fa fa-bars"></span>
+<!-- Navbar -->
+<nav class="bg-white shadow-sm">
+    <div class="container mx-auto flex justify-between items-center px-6 py-4">
+        <div class="flex items-center space-x-2">
+            <a href="<?= base_url('home') ?>" class="flex items-center space-x-2">
+                <img src="<?= base_url('assets/images/Logo.png') ?>" alt="Logo" class="w-8 h-8">
+                <span class="font-bold text-lg">SIMS PPOB</span>
+            </a>
+        </div>
+        <div class="flex space-x-8 font-semibold">
+            <a href="<?= base_url('topup') ?>" class="hover:text-red-500">Top Up</a>
+            <a href="<?= base_url('history') ?>" class="hover:text-red-500">Transaction</a>
+            <a href="<?= base_url('profile') ?>" class="hover:text-red-500">Akun</a>
+        </div>
+    </div>
+</nav>
+
+
+<!-- Main Content -->
+<div class="container mx-auto px-6 py-10">
+
+    <!-- Profile and Balance -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div class="flex flex-col items-center md:items-start">
+            <img src="<?= !empty($profile['profile_image']) ? $profile['profile_image'] : base_url('assets/images/default-profile.png') ?>" alt="Profile Image" class="w-24 h-24 rounded-full mb-4 object-cover">
+            <h2 class="text-gray-600 text-lg">Selamat datang,</h2>
+            <h1 class="text-2xl font-bold"><?= esc($profile['first_name']) ?> <?= esc($profile['last_name']) ?></h1>
+        </div>
+
+        <div class="bg-red-500 text-white rounded-2xl p-6 flex flex-col items-start justify-center">
+            <h4 class="text-lg">Saldo anda</h4>
+            <p class="text-3xl mt-2 font-bold">Rp <span id="balance">••••••••</span></p>
+            <button id="toggleBalance" class="flex items-center mt-4 text-white font-semibold hover:underline">
+                Lihat Saldo
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 2C5 2 1.73 6.11 1 10c.73 3.89 4 8 9 8s8.27-4.11 9-8c-.73-3.89-4-8-9-8zM10 16c-2.5 0-4.71-1.28-6-3.22C5.29 10.28 7.5 9 10 9s4.71 1.28 6 3.22C14.71 14.72 12.5 16 10 16z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+  <!-- Filter Bulan -->
+  <div class="mt-10 bg-white p-6 rounded shadow">
+    <h2 class="text-xl font-bold mb-6">Semua Transaksi</h2>
+
+    <!-- Filter Bulan -->
+    <div class="flex gap-2 overflow-x-auto mb-4">
+      <?php foreach ($months as $key => $month) : ?>
+        <button class="month-btn bg-gray-100 p-2 rounded hover:bg-red-500 hover:text-white" data-month="<?= $key ?>">
+          <?= $month ?>
+        </button>
+      <?php endforeach; ?>
+    </div>
+
+    <!-- Transaction List -->
+    <div id="transactionList">
+      <?php foreach ($history as $item): ?>
+        <div class="border-b py-4">
+          <div class="font-semibold"> <?= esc($item['transaction_type']) ?> - <?= esc($item['description']) ?> </div>
+          <div class="text-gray-500 text-sm"> <?= date('d-m-Y H:i', strtotime($item['created_on'])) ?> </div>
+          <div class="mt-2 <?= $item['transaction_type'] === 'TOPUP' ? 'text-green-600' : 'text-red-600' ?>">
+            Rp <?= number_format($item['total_amount'], 0, ',', '.') ?>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    </div>
+
+    <!-- Show More Button -->
+    <div class="text-center mt-6">
+      <button id="loadMore" class="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600">
+        Tampilkan Lebih Banyak
       </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item"><a href="<?= base_url('topup') ?>" class="nav-link">Top Up</a></li>
-          <li class="nav-item"><a href="<?= base_url('history') ?>" class="nav-link">Transaction</a></li>
-          <li class="nav-item"><a href="<?= base_url('profile') ?>" class="nav-link">Akun</a></li>
-          <li class="nav-item"><a href="<?= base_url('logout'); ?>" class="nav-link">Log Out</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <div class="container mt-5">
-    <div class="row">
-      <!-- Profil -->
-      <div class="col-md-6 mb-4">
-        <div class="card p-4">
-          <div class="text-left">
-            <img src="<?= $profile['profile_image'] ?>" alt="Profile Image" class="img-fluid rounded-circle mb-3" style="width: 100px;">
-            <h4>Selamat datang, <?= $profile['first_name'] ?> <?= $profile['last_name'] ?></h4>
-          </div>
-        </div>
-      </div>
-
-      <!-- Saldo -->
-      <div class="col-md-6 mb-4">
-        <div class="card text-white" style="background-image: url('<?= base_url('assets/images/Background Saldo.png'); ?>'); background-size: cover; background-position: center;">
-          <div class="card-body d-flex flex-column justify-content-left text-left" style="background-color: rgba(0, 0, 0, 0); border-radius: 0.5rem;">
-            <h4>Saldo Anda</h4>
-            <p class="h3">Rp <span id="balance"><?= number_format($balance['balance'], 0, ',', '.') ?></span></p>
-            <button class="btn btn-light mt-3" id="toggleBalance">Lihat Saldo</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Transaction History -->
-    <div class="card p-4 mt-4">
-      <h4>Semua Transaksi</h4>
-
-      <!-- Pilihan Bulan -->
-      <div class="btn-group mt-3" role="group" aria-label="Pilih Bulan">
-        <?php foreach ($months as $key => $value) : ?>
-          <button type="button" class="btn btn-outline-primary month-btn" data-month="<?= $key; ?>"><?= $value; ?></button>
-        <?php endforeach; ?>
-      </div>
-
-      <div id="transactionList" class="mt-4">
-        <?php if (!empty($history)) : ?>
-          <?php foreach ($history as $item) : ?>
-            <div class="transaction-item">
-              <strong><?= $item['transaction_type']; ?>:</strong> <?= $item['description']; ?> <br>
-              <small><?= date('d-m-Y H:i:s', strtotime($item['created_on'])); ?></small> <br>
-              <strong>Total:</strong> 
-              <span class="<?= ($item['transaction_type'] === 'TOPUP') ? 'text-success' : 'text-danger'; ?>">
-                Rp <?= number_format($item['total_amount'], 0, ',', '.'); ?>
-              </span>
-            </div>
-          <?php endforeach; ?>
-        <?php else : ?>
-          <p>Tidak ada transaksi.</p>
-        <?php endif; ?>
-      </div>
-
-      <button class="btn btn-show-more mt-3" id="loadMore">Tampilkan Lebih Banyak</button>
     </div>
   </div>
-</section>
+</div>
 
-<!-- JS -->
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-
+<!-- JS Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-  const balance = document.getElementById('balance');
-  balance.style.filter = 'blur(5px)';
+let offset = <?= count($history) ?>;
+const limit = <?= $limit ?>;
 
-  document.getElementById('toggleBalance').addEventListener('click', function () {
-    const isBlurred = balance.style.filter === 'blur(5px)';
-    balance.style.filter = isBlurred ? 'none' : 'blur(5px)';
-    this.textContent = isBlurred ? 'Sembunyikan Saldo' : 'Lihat Saldo';
+// Load More Button
+$('#loadMore').click(function() {
+  $.get('<?= base_url('history/loadMoreHistory') ?>', { offset, limit }, function(response) {
+    if (response.status === 200 && response.data.length) {
+      response.data.forEach(item => {
+        const html = `
+          <div class="border-b py-4">
+            <div class="font-semibold">${item.transaction_type} - ${item.description}</div>
+            <div class="text-gray-500 text-sm">${new Date(item.created_on).toLocaleString('id-ID')}</div>
+            <div class="mt-2 ${item.transaction_type === 'TOPUP' ? 'text-green-600' : 'text-red-600'}">
+              Rp ${item.total_amount.toLocaleString('id-ID')}
+            </div>
+          </div>
+        `;
+        $('#transactionList').append(html);
+      });
+      offset += limit;
+    } else {
+      $('#loadMore').hide(); // Hide button if no more data
+    }
   });
+});
 
-  let offset = <?= count($history) ?>;
-  const limit = <?= $limit ?>;
+const balance = document.getElementById('balance');
+    const toggleButton = document.getElementById('toggleBalance');
 
-  $('#loadMore').click(function() {
-    const selectedMonth = $('.month-btn.active').data('month');
-    $.ajax({
-      url: "<?= base_url('history/loadMoreHistory') ?>",
-      method: "GET",
-      data: {
-        offset: offset,
-        limit: limit,
-        month: selectedMonth
-      },
-      success: function(response) {
-        if (response.status === 200) {
-          if (response.data.length > 0) {
-            response.data.forEach(function(item) {
-              const amountClass = item.transaction_type === 'TOPUP' ? 'text-success' : 'text-danger';
-              $('#transactionList').append(`
-                <div class="transaction-item">
-                  <strong>${item.transaction_type}:</strong> ${item.description} <br>
-                  <small>${new Date(item.created_on).toLocaleString('id-ID')}</small> <br>
-                  <strong>Total:</strong> 
-                  <span class="${amountClass}">
-                    Rp ${item.total_amount.toLocaleString('id-ID')}
-                  </span>
-                </div>
-              `);
-            });
-            offset += limit;
-          } else {
-            $('#loadMore').hide();
-          }
-        }
-      }
-    });
-  });
-
-  // Pilih bulan dengan klik
-  $('.month-btn').click(function() {
-    $('.month-btn').removeClass('active');
-    $(this).addClass('active');
-    
-    const selectedMonth = $(this).data('month');
-    $.ajax({
-      url: "<?= base_url('history/filterByMonth') ?>",
-      method: "GET",
-      data: { month: selectedMonth },
-      success: function(response) {
-        $('#transactionList').empty();
-        if (response.status === 200 && response.data.length > 0) {
-          response.data.forEach(function(item) {
-            const amountClass = item.transaction_type === 'TOPUP' ? 'text-success' : 'text-danger';
-            $('#transactionList').append(`
-              <div class="transaction-item">
-                <strong>${item.transaction_type}:</strong> ${item.description} <br>
-                <small>${new Date(item.created_on).toLocaleString('id-ID')}</small> <br>
-                <strong>Total:</strong> 
-                <span class="${amountClass}">
-                  Rp ${item.total_amount.toLocaleString('id-ID')}
-                </span>
-              </div>
-            `);
-          });
-          $('#loadMore').show();
+    toggleButton.addEventListener('click', function () {
+        if (balance.innerText.includes('•')) {
+            balance.innerText = '<?= number_format($balance['balance'] ?? 0, 0, ',', '.') ?>';
+            this.innerText = 'Sembunyikan Saldo';
         } else {
-          $('#transactionList').html('<p>Tidak ada transaksi pada bulan ini.</p>');
-          $('#loadMore').hide();
+            balance.innerText = '••••••••';
+            this.innerHTML = 'Lihat Saldo <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1 inline" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2C5 2 1.73 6.11 1 10c.73 3.89 4 8 9 8s8.27-4.11 9-8c-.73-3.89-4-8-9-8zM10 16c-2.5 0-4.71-1.28-6-3.22C5.29 10.28 7.5 9 10 9s4.71 1.28 6 3.22C14.71 14.72 12.5 16 10 16z"/></svg>';
         }
-        offset = response.data.length;
-      }
     });
+
+// Filter by Month
+$('.month-btn').click(function() {
+  // Highlight selected month
+  $('.month-btn').removeClass('bg-red-500 text-white').addClass('bg-gray-100 text-black');
+  $(this).removeClass('bg-gray-100 text-black').addClass('bg-red-500 text-white');
+
+  const month = $(this).data('month');
+  $.get('<?= base_url('history/filterByMonth') ?>', { month }, function(response) {
+    $('#transactionList').empty(); // Clear transaction list before appending new results
+    if (response.status === 200 && response.data.length) {
+      response.data.forEach(item => {
+        const html = `
+          <div class="border-b py-4">
+            <div class="font-semibold">${item.transaction_type} - ${item.description}</div>
+            <div class="text-gray-500 text-sm">${new Date(item.created_on).toLocaleString('id-ID')}</div>
+            <div class="mt-2 ${item.transaction_type === 'TOPUP' ? 'text-green-600' : 'text-red-600'}">
+              Rp ${item.total_amount.toLocaleString('id-ID')}
+            </div>
+          </div>
+        `;
+        $('#transactionList').append(html);
+      });
+    } else {
+      $('#transactionList').html('<p class="text-center text-gray-500">Tidak ada transaksi bulan ini.</p>');
+      $('#loadMore').hide(); // Hide button if no more data
+    }
   });
+});
 </script>
 
 </body>

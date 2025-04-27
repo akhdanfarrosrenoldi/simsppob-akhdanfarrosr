@@ -1,247 +1,170 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <title>SIMS PPOB Top Up</title>
+  <title>Top Up - SIMS PPOB</title>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link href="https://fonts.googleapis.com/css?family=Roboto:400,100,300,700" rel="stylesheet">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="<?= base_url(); ?>/assets/css/style.css">
-  <style>
-    .topup-button { width: 100%; margin-bottom: 10px; }
-    .balance-card {
-      background-image: url('<?= base_url('assets/images/Background Saldo.png'); ?>');
-      background-size: cover;
-      background-position: center;
-      color: white;
-    }
-    .form-topup {
-      margin-top: 30px;
-      padding: 20px;
-      background: #f8f9fa;
-      border-radius: 10px;
-    }
-
-     /* Navbar style */
-     .navbar {
-        padding: 0;
-        height: 100px;
-        align-items: center;
-      }
-      .navbar-brand {
-        font-weight: bold;
-        font-size: 24px;
-        color: black;
-        margin-left: 20px;
-      }
-      .navbar-nav .nav-link {
-        font-weight: bold;
-        color: black !important;
-        margin-right: 20px;
-        font-size: 16px;
-      }
-      /* Service Row */
-      .services-row {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding-bottom: 10px;
-      }
-      .service-card {
-        flex: 0 0 auto;
-        width: 100px;
-        margin-right: 10px;
-        text-align: center;
-      }
-      .service-card img {
-        width: 50px;
-        height: 50px;
-        object-fit: contain;
-      }
-      /* Card Style */
-      .card {
-        max-height: 350px;
-        overflow: hidden;
-        margin-bottom: 20px;
-        display: flex;
-        flex-direction: column;
-      }
-      .card-body {
-        padding: 20px;
-      }
-      .carousel-item img {
-        height: 200px;
-        object-fit: cover;
-      }
-
-      /* Flexbox for equal card height */
-      .row-equal .col-md-6 {
-        display: flex;
-        justify-content: space-between;
-        flex-direction: column;
-      }
-      .row-equal .card {
-        flex: 1;
-      }
-  </style>
 </head>
 
-<body>
-  <section class="ftco-section">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container">
-        <a class="navbar-brand" href="<?= session()->get('isLoggedIn') ? base_url('home') : base_url('registration') ?>">
-          <img src="<?= base_url(); ?>/assets/images/Logo.png" alt="Logo" style="width: 40px; height: 40px; margin-right: 10px;">
-          SIMS PPOB
-        </a>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item"><a href="<?= base_url('topup') ?>" class="nav-link">Top Up</a></li>
-            <li class="nav-item"><a href="<?= base_url('history') ?>" class="nav-link">Transaction</a></li>
-            <li class="nav-item"><a href="<?= base_url('profile') ?>" class="nav-link">Akun</a></li>
-            <li class="nav-item"><a href="<?= base_url('logout') ?>" class="nav-link">Log Out</a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+<body class="bg-white text-gray-800">
 
-    <div class="container mt-5">
-      <div class="row">
-        <div class="col-md-6 mb-4">
-          <div class="card p-4">
-            <div class="text-left">
-              <img src="<?= $profile['profile_image'] ?>" alt="Profile Image" class="img-fluid rounded-circle mb-3" style="width: 100px;">
-              <h4>Selamat datang, <?= esc($profile['first_name']) ?> <?= esc($profile['last_name']) ?></h4>
-            </div>
-          </div>
+<!-- Navbar -->
+<nav class="bg-white shadow-sm">
+    <div class="container mx-auto flex justify-between items-center px-6 py-4">
+        <div class="flex items-center space-x-2">
+            <a href="<?= base_url('home') ?>" class="flex items-center space-x-2">
+                <img src="<?= base_url('assets/images/Logo.png') ?>" alt="Logo" class="w-8 h-8">
+                <span class="font-bold text-lg">SIMS PPOB</span>
+            </a>
         </div>
-
-        <div class="col-md-6 mb-4">
-          <div class="card balance-card p-4">
-            <h4>Saldo Anda</h4>
-            <p class="h3" id="balance"><?= number_format($balance['balance'], 0, ',', '.') ?></p>
-            <button class="btn btn-light mt-3" id="toggleBalance">Lihat Saldo</button>
-          </div>
+        <div class="flex space-x-8 font-semibold">
+            <a href="<?= base_url('topup') ?>" class="hover:text-red-500">Top Up</a>
+            <a href="<?= base_url('history') ?>" class="hover:text-red-500">Transaction</a>
+            <a href="<?= base_url('profile') ?>" class="hover:text-red-500">Akun</a>
         </div>
-      </div>
-
-      <div class="form-topup">
-        <h5>Top Up Saldo</h5>
-        <div class="form-group">
-          <input type="number" class="form-control" id="nominal" name="nominal" placeholder="Masukkan nominal Top Up (Minimal 10.000, Maksimal 1.000.000)" min="10000" max="1000000" required>
-        </div>
-
-        <div class="row text-center">
-          <?php
-            $presetNominal = [10000, 20000, 50000, 100000, 250000, 500000];
-            foreach ($presetNominal as $value):
-          ?>
-            <div class="col-6 col-md-4 mb-2">
-              <button type="button" class="btn btn-outline-primary topup-button" data-value="<?= $value ?>">Rp <?= number_format($value, 0, ',', '.') ?></button>
-            </div>
-          <?php endforeach; ?>
-        </div>
-
-        <div class="text-center mt-4">
-          <button class="btn btn-primary btn-block" id="btnSubmit" disabled>Top Up</button>
-        </div>
-      </div>
     </div>
-  </section>
+</nav>
 
-  <!-- Modal for confirmation -->
-  <div class="modal" tabindex="-1" role="dialog" id="confirmModal">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Konfirmasi Top Up</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+
+<!-- Main Content -->
+<div class="container mx-auto px-6 py-10">
+
+    <!-- Profile and Balance -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div class="flex flex-col items-center md:items-start">
+            <img src="<?= !empty($profile['profile_image']) ? $profile['profile_image'] : base_url('assets/images/default-profile.png') ?>" alt="Profile Image" class="w-24 h-24 rounded-full mb-4 object-cover">
+            <h2 class="text-gray-600 text-lg">Selamat datang,</h2>
+            <h1 class="text-2xl font-bold"><?= esc($profile['first_name']) ?> <?= esc($profile['last_name']) ?></h1>
         </div>
-        <div class="modal-body">
-          <p>Apakah Anda yakin ingin melakukan top up sebesar <span id="confirmAmount"></span>?</p>
+
+        <div class="bg-red-500 text-white rounded-2xl p-6 flex flex-col items-start justify-center">
+            <h4 class="text-lg">Saldo anda</h4>
+            <p class="text-3xl mt-2 font-bold">Rp <span id="balance">••••••••</span></p>
+            <button id="toggleBalance" class="flex items-center mt-4 text-white font-semibold hover:underline">
+                Lihat Saldo
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 2C5 2 1.73 6.11 1 10c.73 3.89 4 8 9 8s8.27-4.11 9-8c-.73-3.89-4-8-9-8zM10 16c-2.5 0-4.71-1.28-6-3.22C5.29 10.28 7.5 9 10 9s4.71 1.28 6 3.22C14.71 14.72 12.5 16 10 16z"/>
+                </svg>
+            </button>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Batalkan</button>
-          <button type="button" class="btn btn-primary" id="confirmTopUp">Ya, Top Up</button>
-        </div>
-      </div>
     </div>
+  <!-- Top Up Form -->
+  <div class="bg-white rounded-xl shadow-lg p-8 mt-10 max-w-2xl mx-auto">
+    <h2 class="text-xl font-bold mb-6 text-center">Silakan masukan nominal top up</h2>
+
+    <div id="alert" class="hidden mb-4 p-4 text-center rounded-lg font-semibold"></div>
+
+    <div class="mb-6">
+      <input type="number" id="nominal" min="10000" max="1000000" placeholder="Masukkan nominal (Minimal 10.000)" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-red-400" required>
+    </div>
+
+    <!-- Preset Buttons -->
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+      <?php
+        $presetNominal = [10000, 20000, 50000, 100000, 250000, 500000];
+        foreach ($presetNominal as $value):
+      ?>
+        <button type="button" class="topup-preset bg-gray-100 hover:bg-red-100 font-bold py-3 rounded-lg" data-value="<?= $value ?>">
+          Rp <?= number_format($value, 0, ',', '.') ?>
+        </button>
+      <?php endforeach; ?>
+    </div>
+
+    <button id="btnSubmit" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-lg" disabled>
+      Top Up Sekarang
+    </button>
   </div>
 
-  <!-- JS -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+</div>
 
-  <script>
+<!-- Modal Konfirmasi -->
+<div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+  <div class="bg-white rounded-xl p-8 shadow-lg max-w-md w-full">
+    <h2 class="text-xl font-bold mb-6">Konfirmasi Top Up</h2>
+    <p class="text-gray-600 mb-6">Apakah Anda yakin ingin Top Up sebesar <span id="confirmAmount" class="font-bold"></span>?</p>
+    <div class="flex justify-end gap-4">
+      <button id="cancelModal" class="px-6 py-2 border border-gray-400 rounded-lg">Batal</button>
+      <button id="confirmTopUp" class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Konfirmasi</button>
+    </div>
+  </div>
+</div>
+
+<!-- JS -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
   // Toggle Saldo
-  const balanceElement = document.getElementById('balance');
-  balanceElement.style.filter = 'blur(5px)';
-  document.getElementById('toggleBalance').addEventListener('click', function () {
-    const isBlurred = balanceElement.style.filter === 'blur(5px)';
-    balanceElement.style.filter = isBlurred ? 'none' : 'blur(5px)';
-    this.textContent = isBlurred ? 'Sembunyikan Saldo' : 'Lihat Saldo';
+  const balance = document.getElementById('balance');
+  const toggleButton = document.getElementById('toggleBalance');
+  toggleButton.addEventListener('click', function () {
+    if (balance.innerText.includes('•')) {
+      balance.innerText = '<?= number_format($balance['balance'], 0, ',', '.') ?>';
+      this.innerText = 'Sembunyikan Saldo';
+    } else {
+      balance.innerText = '••••••••';
+      this.innerText = 'Lihat Saldo';
+    }
   });
 
-  // Enable submit button
-  function enableSubmitButton() {
-    const nominal = document.getElementById('nominal').value;
-    document.getElementById('btnSubmit').disabled = !(nominal >= 10000 && nominal <= 1000000);
-  }
-
-  document.getElementById('nominal').addEventListener('input', enableSubmitButton);
-
-  document.querySelectorAll('.topup-button').forEach(button => {
-    button.addEventListener('click', function () {
+  // Preset Buttons
+  document.querySelectorAll('.topup-preset').forEach(button => {
+    button.addEventListener('click', function() {
       document.getElementById('nominal').value = this.dataset.value;
-      enableSubmitButton();
+      document.getElementById('btnSubmit').disabled = false;
     });
   });
 
-  // Show confirmation modal
-  document.getElementById('btnSubmit').addEventListener('click', function () {
-    const nominal = parseInt(document.getElementById('nominal').value);
+  // Enable Submit Button
+  document.getElementById('nominal').addEventListener('input', function() {
+    const nominal = parseInt(this.value);
+    document.getElementById('btnSubmit').disabled = !(nominal >= 10000 && nominal <= 1000000);
+  });
+
+  // Show Confirmation Modal
+  document.getElementById('btnSubmit').addEventListener('click', function() {
+    const nominal = document.getElementById('nominal').value;
     if (nominal >= 10000 && nominal <= 1000000) {
-      document.getElementById('confirmAmount').textContent = 'Rp ' + nominal.toLocaleString('id-ID');
-      $('#confirmModal').modal('show');
+      document.getElementById('confirmAmount').innerText = 'Rp ' + parseInt(nominal).toLocaleString('id-ID');
+      document.getElementById('confirmModal').classList.remove('hidden');
     }
   });
 
-  // Confirm top-up
+  // Cancel Modal
+  document.getElementById('cancelModal').addEventListener('click', function() {
+    document.getElementById('confirmModal').classList.add('hidden');
+  });
+
+  // Confirm TopUp
   document.getElementById('confirmTopUp').addEventListener('click', function () {
     const nominal = parseInt(document.getElementById('nominal').value);
     $.ajax({
-      url: '<?= base_url('topup/topUp') ?>',
-      method: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify({
-        top_up_amount: nominal
-      }),
+      url: "<?= base_url('topup/topUp') ?>",
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({ top_up_amount: nominal }),
       success: function (response) {
-        console.log(response);  // Log response untuk debug
+        const alert = document.getElementById('alert');
         if (response.status === 0) {
-          alert('Top Up Berhasil! Saldo Baru: Rp ' + response.data.balance.toLocaleString('id-ID'));
-          location.reload();  // Reload halaman untuk memperbarui saldo
-        } else if (response.status === 102) {
-          alert('Error: ' + response.message);
-        } else if (response.status === 108) {
-          alert('Session habis, silakan login kembali.');
-          window.location.href = "<?= base_url('login') ?>";
+          alert.classList.remove('hidden', 'bg-red-100', 'text-red-700');
+          alert.classList.add('bg-green-100', 'text-green-700');
+          alert.innerText = "Top Up berhasil! Saldo baru: Rp " + response.data.balance.toLocaleString('id-ID');
+          setTimeout(() => location.reload(), 2000);
         } else {
-          alert('Gagal: ' + response.message);
+          alert.classList.remove('hidden', 'bg-green-100', 'text-green-700');
+          alert.classList.add('bg-red-100', 'text-red-700');
+          alert.innerText = "Gagal: " + response.message;
         }
       },
-      error: function (xhr, status, error) {
-        console.error("AJAX Error:", error); // Log error untuk debugging
-        alert('Terjadi kesalahan pada server.');
+      error: function() {
+        alert('Terjadi kesalahan server.');
       }
     });
-    $('#confirmModal').modal('hide');
+    document.getElementById('confirmModal').classList.add('hidden');
   });
-
-  </script>
+</script>
 
 </body>
 </html>

@@ -9,11 +9,9 @@ class LoginController extends Controller
 {
     public function index()
     {
-        // Kalau sudah login, langsung ke home
         if (session()->get('isLoggedIn')) {
             return redirect()->to('/home');
         }
-
         return view('login');
     }
 
@@ -23,51 +21,54 @@ class LoginController extends Controller
 
         $rules = [
             'email'    => 'required|valid_email',
-            'password' => 'required|min_length[8]'
+            'password' => 'required|min_length[8]',
         ];
 
-        // Validasi input
         if (!$this->validate($rules)) {
-            return redirect()->back()->withInput()->with('error', 'Email atau password tidak valid');
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Email atau password tidak valid.');
         }
 
-        // Ambil data dari form
         $email = $this->request->getPost('email');
         $password = $this->request->getPost('password');
 
-        // Kirim request ke API login
-        $client = \Config\Services::curlrequest();
+        $client = Services::curlrequest();
 
         try {
             $response = $client->post('https://take-home-test-api.nutech-integrasi.com/login', [
                 'headers' => ['Content-Type' => 'application/json'],
                 'body' => json_encode([
-                    'email' => $email,
-                    'password' => $password
+                    'email'    => $email,
+                    'password' => $password,
                 ])
             ]);
 
             $result = json_decode($response->getBody(), true);
 
-            // Cek apakah login berhasil
             if (isset($result['status']) && $result['status'] === 0) {
-                // Simpan token JWT ke session
-                session()->set('isLoggedIn', true);
-                session()->set('token', $result['data']['token']);
-                return redirect()->to('/home'); // Arahkan ke homepage
+                session()->set([
+                    'isLoggedIn' => true,
+                    'token'      => $result['data']['token'],
+                ]);
+                return redirect()->to('/home');
             } else {
-                return redirect()->back()->withInput()->with('error', $result['message'] ?? 'Login gagal');
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', $result['message'] ?? 'Login gagal.');
             }
 
         } catch (\Exception $e) {
-            // Tangani error koneksi API
-            return redirect()->back()->withInput()->with('error', 'Gagal terhubung ke server API. Coba lagi nanti.');
+            log_message('error', 'Login API Error: ' . $e->getMessage());
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Tidak dapat menghubungi server API.');
         }
     }
 
     public function logout()
     {
-        session()->destroy(); // Menghapus semua session
-        return redirect()->to('/login'); // Arahkan ke halaman login setelah logout
+        session()->destroy();
+        return redirect()->to('/login');
     }
 }

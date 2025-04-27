@@ -8,74 +8,97 @@ class HomepageController extends Controller
 {
     public function index()
     {
-        // Cek kalau belum login
         if (!session()->get('isLoggedIn')) {
             return redirect()->to('/login');
         }
 
-        // Ambil token dari session
         $token = session()->get('token');
 
-        // Mendapatkan data profil, saldo, layanan, dan banner
-        $profile = $this->getProfile($token);
-        $balance = $this->getBalance($token);
+        $profile  = $this->getProfile($token);
+        $balance  = $this->getBalance($token);
         $services = $this->getServices($token);
-        $banners = $this->getBanners($token);
+        $banners  = $this->getBanners($token);
 
-        // Kirim data ke view
         return view('homepage', [
-            'profile' => $profile,
-            'balance' => $balance,
+            'profile'  => $profile,
+            'balance'  => $balance,
             'services' => $services,
-            'banners' => $banners
+            'banners'  => $banners,
+        ]);
+    }
+
+    public function service($serviceCode)
+    {
+        if (!session()->get('isLoggedIn')) {
+            return redirect()->to('/login');
+        }
+
+        $token = session()->get('token');
+        $service = $this->getServiceDetail($token, $serviceCode);
+
+        return view('service-detail', [
+            'service' => $service,
         ]);
     }
 
     private function getProfile($token)
     {
-        $url = 'https://take-home-test-api.nutech-integrasi.com/profile';
-        return $this->sendRequest($url, $token)['data'] ?? null;
+        return $this->sendRequest('https://take-home-test-api.nutech-integrasi.com/profile', $token)['data'] ?? null;
     }
 
     private function getBalance($token)
     {
-        $url = 'https://take-home-test-api.nutech-integrasi.com/balance';
-        return $this->sendRequest($url, $token)['data'] ?? null;
+        return $this->sendRequest('https://take-home-test-api.nutech-integrasi.com/balance', $token)['data'] ?? null;
     }
 
     private function getServices($token)
     {
-        $url = 'https://take-home-test-api.nutech-integrasi.com/services';
-        return $this->sendRequest($url, $token)['data'] ?? [];
+        return $this->sendRequest('https://take-home-test-api.nutech-integrasi.com/services', $token)['data'] ?? [];
     }
 
     private function getBanners($token)
     {
-        $url = 'https://take-home-test-api.nutech-integrasi.com/banner';
-        return $this->sendRequest($url, $token)['data'] ?? [];
+        return $this->sendRequest('https://take-home-test-api.nutech-integrasi.com/banner', $token)['data'] ?? [];
+    }
+
+    private function getServiceDetail($token, $serviceCode)
+    {
+        $url = 'https://take-home-test-api.nutech-integrasi.com/services/' . urlencode($serviceCode);
+        return $this->sendRequest($url, $token)['data'] ?? null;
     }
 
     private function sendRequest($url, $token = null)
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $ch = curl_init($url);
 
-        // Menambahkan token pada header jika ada
-        $headers = ['Content-Type: application/json'];
+        $headers = ['Accept: application/json'];
         if ($token) {
             $headers[] = 'Authorization: Bearer ' . $token;
         }
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_TIMEOUT => 10,
+        ]);
 
         $response = curl_exec($ch);
 
         if (curl_errno($ch)) {
+            log_message('error', 'Curl error: ' . curl_error($ch));
             curl_close($ch);
             return null;
         }
 
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $decodedResponse = json_decode($response, true);
         curl_close($ch);
-        return json_decode($response, true);
+
+        if ($httpCode == 401 || ($decodedResponse['status'] ?? null) == 108) {
+            session()->destroy();
+            return redirect()->to('/login')->with('error', 'Sesi anda habis. Silakan login kembali.');
+        }
+
+        return $decodedResponse;
     }
 }

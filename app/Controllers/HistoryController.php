@@ -13,19 +13,18 @@ class HistoryController extends Controller
             return redirect()->to('/login');
         }
 
-        // Define months array
-        $months = $this->getMonths();
-
+        // Ambil data profil dan saldo user
         $profile = $this->getProfile($token);
         $balance = $this->getBalance($token);
-        $history = $this->getHistory($token, 0, 5); // Ambil 5 pertama saat load
+        // Ambil 5 transaksi pertama
+        $history = $this->getHistory($token, 0, 5);
 
         return view('history', [
             'profile' => $profile,
             'balance' => $balance,
-            'history' => $history['records'] ?? [],
-            'limit' => 5,
-            'months' => $months // Pass the months array to the view
+            'history' => $history['records'] ?? [], // Pastikan history dalam bentuk array
+            'limit'   => 5,
+            'months'  => $this->getMonths(),
         ]);
     }
 
@@ -39,81 +38,96 @@ class HistoryController extends Controller
             ]);
         }
 
-        $offset = (int)($this->request->getGet('offset') ?? 0);
-        $limit = (int)($this->request->getGet('limit') ?? 5);
+        // Ambil offset dan limit dari query params
+        $offset = (int) $this->request->getGet('offset');
+        $limit  = (int) $this->request->getGet('limit');
 
-        // Validate limit and offset
-        if ($limit <= 0 || $offset < 0) {
-            return $this->response->setJSON([
-                'status' => 400,
-                'message' => 'Invalid offset or limit value'
-            ]);
-        }
-
+        // Ambil data history sesuai offset dan limit
         $history = $this->getHistory($token, $offset, $limit);
 
+        // Kirim data transaksi tambahan ke client
         return $this->response->setJSON([
             'status' => 200,
-            'data' => $history['records'] ?? []
+            'data'   => $history['records'] ?? []
         ]);
     }
 
     private function getProfile($token)
     {
-        $url = 'https://take-home-test-api.nutech-integrasi.com/profile';
-        return $this->sendRequest($url, $token)['data'] ?? null;
+        $response = $this->sendRequest('https://take-home-test-api.nutech-integrasi.com/profile', $token);
+        return $response['data'] ?? [];
     }
 
     private function getBalance($token)
     {
-        $url = 'https://take-home-test-api.nutech-integrasi.com/balance';
-        return $this->sendRequest($url, $token)['data'] ?? null;
+        $response = $this->sendRequest('https://take-home-test-api.nutech-integrasi.com/balance', $token);
+        return $response['data'] ?? [];
     }
 
     private function getHistory($token, $offset = 0, $limit = 5)
     {
-        $url = 'https://take-home-test-api.nutech-integrasi.com/transaction/history?offset=' . $offset . '&limit=' . $limit;
-        return $this->sendRequest($url, $token)['data'] ?? [];
+        $url = "https://take-home-test-api.nutech-integrasi.com/transaction/history?offset={$offset}&limit={$limit}";
+        $response = $this->sendRequest($url, $token);
+        return $response['data'] ?? [];
     }
 
-    private function sendRequest($url, $token = null)
+    private function sendRequest($url, $token)
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $headers = ['Content-Type: application/json'];
-        if ($token) {
-            $headers[] = 'Authorization: Bearer ' . $token;
+        $client = \Config\Services::curlrequest();
+        try {
+            $response = $client->get($url, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token,
+                    'Accept'        => 'application/json'
+                ]
+            ]);
+            return json_decode($response->getBody(), true);
+        } catch (\Exception $e) {
+            log_message('error', $e->getMessage());
+            return ['status' => 500, 'message' => 'Internal Server Error'];
         }
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-        $response = curl_exec($ch);
-
-        if (curl_errno($ch)) {
-            curl_close($ch);
-            return null;
-        }
-
-        curl_close($ch);
-        return json_decode($response, true);
     }
 
     private function getMonths()
     {
         return [
-            '01' => 'Januari',
-            '02' => 'Februari',
-            '03' => 'Maret',
-            '04' => 'April',
-            '05' => 'Mei',
-            '06' => 'Juni',
-            '07' => 'Juli',
-            '08' => 'Agustus',
-            '09' => 'September',
-            '10' => 'Oktober',
-            '11' => 'November',
-            '12' => 'Desember'
+            '01' => 'Januari', '02' => 'Februari', '03' => 'Maret',
+            '04' => 'April', '05' => 'Mei', '06' => 'Juni',
+            '07' => 'Juli', '08' => 'Agustus', '09' => 'September',
+            '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
         ];
     }
+
+    public function filterByMonth()
+{
+    $token = session()->get('token');
+    if (!$token) {
+        return $this->response->setJSON([
+            'status' => 401,
+            'message' => 'Unauthorized'
+        ]);
+    }
+
+    $month = $this->request->getGet('month');
+    $history = $this->getHistory($token);  // Ambil seluruh data transaksi
+    $filtered = [];
+
+    // Filter transaksi berdasarkan bulan yang dipilih
+    if (!empty($history['records'])) {
+        foreach ($history['records'] as $item) {
+            if (date('m', strtotime($item['created_on'])) == $month) {
+                $filtered[] = $item;
+            }
+        }
+    }
+
+    // Kirimkan hanya transaksi yang sesuai bulan yang dipilih
+    return $this->response->setJSON([
+        'status' => 200,
+        'data'   => $filtered
+    ]);
+}
+
+
+
 }

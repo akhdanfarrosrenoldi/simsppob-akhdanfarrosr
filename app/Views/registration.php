@@ -3,125 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>SIMS PPOB - Registrasi</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="<?= base_url(); ?>/assets/css/login.css">
+  <title>Registrasi - SIMS PPOB</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
 </head>
-<body>
-  <main>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-6 login-section-wrapper">
-          <div class="brand-wrapper">
-            <img src="<?= base_url(); ?>/assets/images/Logo.png" class="logo" alt="logo">
-            <span class="logo-text" style="font-size: 24px; font-weight: bold;">SIMS PPOB</span>
-          </div>
-          <div class="login-wrapper my-auto">
-            <h1 class="login-title">Lengkapi data untuk membuat akun</h1>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-            <!-- Notifikasi Error Bootstrap -->
-            <?php if (session()->getFlashdata('error')): ?>
-              <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <?= session()->getFlashdata('error') ?>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-            <?php endif; ?>
+<main class="w-full h-screen flex flex-col md:flex-row">
 
-            <?php if (session()->getFlashdata('error_confirm_password')): ?>
-              <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <?= session()->getFlashdata('error_confirm_password') ?>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-            <?php endif; ?>
-
-            <form action="<?= base_url('registration/register') ?>" method="post">
-              <div class="form-group">
-                <input type="email" name="email" value="<?= old('email') ?>" class="form-control" placeholder="Masukan email anda" required>
-              </div>
-              <div class="form-group">
-                <input type="text" name="first_name" value="<?= old('first_name') ?>" class="form-control" placeholder="Nama depan" required>
-              </div>
-              <div class="form-group">
-                <input type="text" name="last_name" value="<?= old('last_name') ?>" class="form-control" placeholder="Nama belakang" required>
-              </div>
-              <!-- Password Field -->
-              <div class="form-group mb-4 position-relative">
-                <input type="password" name="password" class="form-control" placeholder="Buat password" id="password" required>
-                <div class="input-group-append position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%);">
-                  <button class="btn btn-light" type="button" id="togglePasswordRegister">
-                    <i class="mdi mdi-eye"></i>
-                  </button>
-                </div>
-              </div>
-              <!-- Confirm Password Field -->
-              <div class="form-group mb-4 position-relative">
-                <input type="password" name="confirm_password" class="form-control" placeholder="Konfirmasi password" id="confirm_password" required>
-                <div class="input-group-append position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%);">
-                  <button class="btn btn-light" type="button" id="toggleConfirmPassword">
-                    <i class="mdi mdi-eye"></i>
-                  </button>
-                </div>
-              </div>
-              <button type="submit" class="btn btn-block login-btn">Registrasi</button>
-            </form>
-
-            <p class="login-wrapper-footer-text">Sudah punya akun? <a href="<?= base_url('login') ?>" class="text-reset">Login disini</a></p>
-          </div>
-        </div>
-        <div class="col-sm-6 px-0 d-none d-sm-block">
-          <img src="<?= base_url(); ?>/assets/images/Illustrasi Login.png" alt="login image" class="login-img">
-        </div>
-      </div>
+  <!-- Left Section -->
+  <div class="w-full md:w-1/2 flex flex-col justify-center px-8 py-12 bg-white">
+    <div class="flex items-center mb-10">
+      <img src="<?= base_url('assets/images/default-profile.png') ?>" class="w-10 h-10 rounded-full mr-3 object-cover" alt="Logo">
+      <span class="text-2xl font-bold text-gray-800">SIMS PPOB</span>
     </div>
-  </main>
 
-  <!-- Script -->
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-  <script>
-    $(document).ready(function() {
-      // Toggle password visibility for the password field
-      document.getElementById("togglePasswordRegister").addEventListener("click", function () {
-        const passwordField = document.getElementById("password");
-        const passwordIcon = document.querySelector("#togglePasswordRegister i");
-        if (passwordField.type === "password") {
-          passwordField.type = "text";
-          passwordIcon.classList.remove("mdi-eye");
-          passwordIcon.classList.add("mdi-eye-off");
-        } else {
-          passwordField.type = "password";
-          passwordIcon.classList.remove("mdi-eye-off");
-          passwordIcon.classList.add("mdi-eye");
-        }
-      });
+    <h1 class="text-3xl font-bold mb-8">Lengkapi data untuk membuat akun</h1>
 
-      // Toggle password visibility for the confirm password field
-      document.getElementById("toggleConfirmPassword").addEventListener("click", function () {
-        const passwordField = document.getElementById("confirm_password");
-        const passwordIcon = document.querySelector("#toggleConfirmPassword i");
-        if (passwordField.type === "password") {
-          passwordField.type = "text";
-          passwordIcon.classList.remove("mdi-eye");
-          passwordIcon.classList.add("mdi-eye-off");
-        } else {
-          passwordField.type = "password";
-          passwordIcon.classList.remove("mdi-eye-off");
-          passwordIcon.classList.add("mdi-eye");
-        }
-      });
+    <!-- Flashdata Success -->
+    <?php if (session()->getFlashdata('success')) : ?>
+      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+        <?= session()->getFlashdata('success') ?>
+      </div>
+    <?php endif; ?>
 
-      // Cek jika ada alert di halaman
-      if ($('.alert').length) {
-        setTimeout(function() {
-          $('.alert').fadeOut('slow');
-        }, 4000);  // Alert hilang setelah 4 detik
-      }
-    });
-  </script>
+    <!-- Flashdata Errors -->
+    <?php if (session()->getFlashdata('errors')) : ?>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+        <?php foreach (session('errors') as $error) : ?>
+          <div><?= $error ?></div>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+
+    <form action="<?= base_url('registration/register') ?>" method="post" class="space-y-4">
+
+      <div>
+        <input type="email" name="email" value="<?= old('email') ?>" placeholder="Masukkan email anda"
+               class="w-full p-3 border <?= session('errors.email') ? 'border-red-500' : 'border-gray-300' ?> rounded">
+      </div>
+
+      <div>
+        <input type="text" name="first_name" value="<?= old('first_name') ?>" placeholder="Nama depan"
+               class="w-full p-3 border <?= session('errors.first_name') ? 'border-red-500' : 'border-gray-300' ?> rounded">
+      </div>
+
+      <div>
+        <input type="text" name="last_name" value="<?= old('last_name') ?>" placeholder="Nama belakang"
+               class="w-full p-3 border <?= session('errors.last_name') ? 'border-red-500' : 'border-gray-300' ?> rounded">
+      </div>
+
+      <div class="relative">
+        <input type="password" name="password" id="password" placeholder="Buat password"
+               class="w-full p-3 border <?= session('errors.password') ? 'border-red-500' : 'border-gray-300' ?> rounded">
+        <button type="button" id="togglePassword" class="absolute right-3 top-3 text-gray-500">
+          <i class="mdi mdi-eye text-2xl"></i>
+        </button>
+      </div>
+
+      <div class="relative">
+        <input type="password" name="confirm_password" id="confirm_password" placeholder="Konfirmasi password"
+               class="w-full p-3 border <?= session('errors.confirm_password') ? 'border-red-500' : 'border-gray-300' ?> rounded">
+        <button type="button" id="toggleConfirmPassword" class="absolute right-3 top-3 text-gray-500">
+          <i class="mdi mdi-eye text-2xl"></i>
+        </button>
+      </div>
+
+      <button type="submit" class="w-full bg-red-500 text-white font-bold py-3 rounded hover:bg-red-600 transition">Registrasi</button>
+
+    </form>
+
+    <p class="mt-6 text-sm text-gray-600 text-center">
+      Sudah punya akun? <a href="<?= base_url('login') ?>" class="text-red-500 font-semibold">Login di sini</a>
+    </p>
+
+  </div>
+
+  <!-- Right Section -->
+  <div class="hidden md:block md:w-1/2">
+    <img src="<?= base_url('assets/images/Illustrasi Login.png') ?>" class="h-full w-full object-cover" alt="Illustration">
+  </div>
+
+</main>
+
+<!-- Script Show/Hide Password -->
+<script>
+  document.getElementById('togglePassword').addEventListener('click', function () {
+    const pwd = document.getElementById('password');
+    pwd.type = pwd.type === 'password' ? 'text' : 'password';
+    this.querySelector('i').classList.toggle('mdi-eye-off');
+  });
+
+  document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
+    const pwd = document.getElementById('confirm_password');
+    pwd.type = pwd.type === 'password' ? 'text' : 'password';
+    this.querySelector('i').classList.toggle('mdi-eye-off');
+  });
+</script>
+
 </body>
 </html>
