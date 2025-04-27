@@ -10,13 +10,12 @@
 
 <body class="bg-gray-100 min-h-screen">
 
+<!-- Navbar -->
 <nav class="bg-white shadow-sm">
     <div class="container mx-auto flex justify-between items-center px-6 py-4">
         <div class="flex items-center space-x-2">
-            <a href="<?= base_url('home') ?>" class="flex items-center space-x-2">
-                <img src="<?= base_url('assets/images/Logo.png') ?>" alt="Logo" class="w-8 h-8">
-                <span class="font-bold text-lg">SIMS PPOB</span>
-            </a>
+            <img src="<?= base_url('assets/images/Logo.png') ?>" alt="Logo" class="w-8 h-8">
+            <span class="font-bold text-lg">SIMS PPOB</span>
         </div>
         <div class="flex space-x-8 font-semibold">
             <a href="<?= base_url('topup') ?>" class="hover:text-red-500">Top Up</a>
@@ -30,10 +29,13 @@
 <!-- Main Content -->
 <div class="container mx-auto px-6 py-10">
 
-    <!-- Profile and Balance -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+       <!-- Profile and Balance -->
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <div class="flex flex-col items-center md:items-start">
-            <img src="<?= !empty($profile['profile_image']) ? $profile['profile_image'] : base_url('assets/images/default-profile.png') ?>" alt="Profile Image" class="w-24 h-24 rounded-full mb-4 object-cover">
+        <img src="<?= $profile['profile_image'] ?? base_url('assets/images/default-profile.png') ?>" 
+     onerror="this.onerror=null;this.src='<?= base_url('assets/images/default-profile.png') ?>';"
+     alt="Profile Image" 
+     class="w-24 h-24 rounded-full mb-4 object-cover">
             <h2 class="text-gray-600 text-lg">Selamat datang,</h2>
             <h1 class="text-2xl font-bold"><?= esc($profile['first_name']) ?> <?= esc($profile['last_name']) ?></h1>
         </div>
@@ -55,7 +57,7 @@
     <h2 class="text-xl font-bold mb-4">Pembayaran</h2>
 
     <div class="flex items-center mb-8 space-x-3">
-      <img src="<?= base_url('assets/images/icon-listrik.png') ?>" alt="Service Icon" class="w-8 h-8">
+<img src="<?= $service['service_icon'] ?>" alt="<?= esc($service['service_name']) ?>" class="w-8 h-8">
       <span class="font-semibold text-gray-700"><?= esc($service['service_name']) ?></span>
     </div>
 

@@ -11,14 +11,20 @@ class HomepageController extends Controller
         if (!session()->get('isLoggedIn')) {
             return redirect()->to('/login');
         }
-
+    
         $token = session()->get('token');
-
+    
         $profile  = $this->getProfile($token);
+        
+        // Tambahkan pengecekan profile image
+        if (empty($profile['profile_image'])) {
+            $profile['profile_image'] = base_url('assets/images/default-profile.png');
+        }
+    
         $balance  = $this->getBalance($token);
         $services = $this->getServices($token);
         $banners  = $this->getBanners($token);
-
+    
         return view('homepage', [
             'profile'  => $profile,
             'balance'  => $balance,
@@ -26,6 +32,7 @@ class HomepageController extends Controller
             'banners'  => $banners,
         ]);
     }
+    
 
     public function service($serviceCode)
     {

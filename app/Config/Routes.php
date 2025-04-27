@@ -13,19 +13,15 @@ $routes->get('logout', 'LoginController::logout');
 
 // Homepage
 $routes->get('home', 'HomepageController::index');
-
-// Service detail (opsional, kalau masih butuh)
 $routes->get('service/(:segment)', 'HomepageController::service/$1');
 
-// Pembayaran: tiap kali user klik layanan, masuk ke sini
+// Pembayaran
 $routes->get('pembayaran/(:segment)', 'PembayaranController::index/$1');
-// untuk handle form pembayaran via POST
 $routes->post('pembayaran/submit', 'PembayaranController::submit');
 
 // Topup
 $routes->get('topup', 'TopupController::index');
 $routes->post('topup/topUp', 'TopupController::topUp');
-
 
 // History
 $routes->get('history', 'HistoryController::index');
@@ -34,9 +30,5 @@ $routes->get('history/loadMoreHistory', 'HistoryController::loadMoreHistory');
 // Profile
 $routes->get('profile', 'ProfileController::index');
 $routes->get('profile/edit', 'ProfileController::edit');
-$routes->put('profile/update', 'ProfileController::updateProfile');
-$routes->post('profile/image', 'ProfileController::updateProfileImage');
-
-$routes->get('pembayaran/(:segment)', 'PembayaranController::index/$1');
-$routes->post('pembayaran/submit', 'PembayaranController::submit');
-
+$routes->post('profile/update', 'ProfileController::updateProfile');
+$routes->post('profile/image', 'ProfileController::updateProfileImage'); // tetap POST, override PUT di JS

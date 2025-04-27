@@ -29,10 +29,14 @@
 <!-- Main Content -->
 <div class="container mx-auto px-6 py-10">
 
+
     <!-- Profile and Balance -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <div class="flex flex-col items-center md:items-start">
-            <img src="<?= !empty($profile['profile_image']) ? $profile['profile_image'] : base_url('assets/images/default-profile.png') ?>" alt="Profile Image" class="w-24 h-24 rounded-full mb-4 object-cover">
+        <img src="<?= $profile['profile_image'] ?? base_url('assets/images/default-profile.png') ?>" 
+     onerror="this.onerror=null;this.src='<?= base_url('assets/images/default-profile.png') ?>';"
+     alt="Profile Image" 
+     class="w-24 h-24 rounded-full mb-4 object-cover">
             <h2 class="text-gray-600 text-lg">Selamat datang,</h2>
             <h1 class="text-2xl font-bold"><?= esc($profile['first_name']) ?> <?= esc($profile['last_name']) ?></h1>
         </div>

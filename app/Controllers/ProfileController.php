@@ -7,16 +7,21 @@ use CodeIgniter\Controller;
 class ProfileController extends Controller
 {
     public function index()
-    {
-        $token = session()->get('token');
-        if (!$token) {
-            return redirect()->to('/login');
-        }
-
-        $profile = $this->getProfile($token);
-
-        return view('profile', compact('profile'));
+{
+    $token = session()->get('token');
+    if (!$token) {
+        return redirect()->to('/login');
     }
+
+    $profile = $this->getProfile($token);
+
+    if (empty($profile['profile_image'])) {
+        $profile['profile_image'] = base_url('assets/images/default-profile.png');
+    }
+
+    return view('profile', compact('profile'));
+}
+
 
     public function edit()
     {
@@ -26,7 +31,6 @@ class ProfileController extends Controller
         }
 
         $profile = $this->getProfile($token);
-
         return view('edit_profile', compact('profile'));
     }
 
@@ -34,24 +38,21 @@ class ProfileController extends Controller
     {
         $token = session()->get('token');
         if (!$token) {
-            return redirect()->to('/login');
+            return $this->response->setJSON(['status' => 1, 'message' => 'Unauthorized']);
         }
 
-        $data = $this->request->getPost();
+        $data = $this->request->getJSON(true);
 
         if (empty($data['first_name']) || empty($data['last_name'])) {
-            session()->setFlashdata('error', 'Nama depan dan nama belakang harus diisi.');
-            return redirect()->back()->withInput();
+            return $this->response->setJSON(['status' => 1, 'message' => 'Nama depan dan belakang harus diisi.']);
         }
 
         $apiResponse = $this->sendUpdateRequest($token, $data);
 
         if ($apiResponse['status'] === 0) {
-            session()->setFlashdata('success', 'Profil berhasil diperbarui.');
-            return redirect()->to('/profile');
+            return $this->response->setJSON(['status' => 0, 'message' => 'Profil berhasil diperbarui.']);
         } else {
-            session()->setFlashdata('error', $apiResponse['message'] ?? 'Gagal memperbarui profil.');
-            return redirect()->back()->withInput();
+            return $this->response->setJSON(['status' => 1, 'message' => $apiResponse['message'] ?? 'Gagal memperbarui profil.']);
         }
     }
 
@@ -59,19 +60,17 @@ class ProfileController extends Controller
     {
         $token = session()->get('token');
         if (!$token) {
-            return redirect()->to('/login');
+            return $this->response->setJSON(['status' => 1, 'message' => 'Unauthorized']);
         }
 
         $file = $this->request->getFile('profile_image');
 
         if (!$file || !$file->isValid()) {
-            session()->setFlashdata('error', 'File tidak valid.');
-            return redirect()->back();
+            return $this->response->setJSON(['status' => 1, 'message' => 'File tidak valid.']);
         }
 
         if (!in_array($file->getMimeType(), ['image/jpeg', 'image/png'])) {
-            session()->setFlashdata('error', 'Format file harus JPEG atau PNG.');
-            return redirect()->back();
+            return $this->response->setJSON(['status' => 1, 'message' => 'Format file harus JPEG atau PNG.']);
         }
 
         $filePath = $file->getTempName();
@@ -80,8 +79,11 @@ class ProfileController extends Controller
         $ch = curl_init('https://take-home-test-api.nutech-integrasi.com/profile/image');
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . $token],
-            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . $token,
+                'Accept: application/json'
+            ],
+            CURLOPT_CUSTOMREQUEST => 'PUT', // HARUS PUT!
             CURLOPT_POSTFIELDS => ['file' => $curlFile]
         ]);
 
@@ -89,8 +91,7 @@ class ProfileController extends Controller
 
         if (curl_errno($ch)) {
             curl_close($ch);
-            session()->setFlashdata('error', 'Gagal mengirim gambar.');
-            return redirect()->back();
+            return $this->response->setJSON(['status' => 1, 'message' => 'Gagal mengirim gambar.']);
         }
 
         curl_close($ch);
@@ -98,12 +99,14 @@ class ProfileController extends Controller
         $response = json_decode($response, true);
 
         if (isset($response['status']) && $response['status'] === 0) {
-            session()->setFlashdata('success', 'Foto profil berhasil diperbarui.');
+            return $this->response->setJSON([
+                'status' => 0,
+                'message' => 'Foto profil berhasil diperbarui!',
+                'data' => $response['data'] ?? []
+            ]);
         } else {
-            session()->setFlashdata('error', $response['message'] ?? 'Gagal update foto profil.');
+            return $this->response->setJSON(['status' => 1, 'message' => $response['message'] ?? 'Gagal update foto profil.']);
         }
-
-        return redirect()->to('/profile');
     }
 
     private function getProfile(string $token)
@@ -118,14 +121,12 @@ class ProfileController extends Controller
     {
         $ch = curl_init($url);
 
-        $headers = [
-            'Authorization: Bearer ' . $token,
-            'Accept: application/json'
-        ];
-
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => $headers
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . $token,
+                'Accept: application/json'
+            ]
         ]);
 
         $response = curl_exec($ch);
@@ -145,11 +146,6 @@ class ProfileController extends Controller
     {
         $url = 'https://take-home-test-api.nutech-integrasi.com/profile/update';
 
-        $headers = [
-            'Authorization: Bearer ' . $token,
-            'Content-Type: application/json'
-        ];
-
         $payload = json_encode([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name']
@@ -159,7 +155,10 @@ class ProfileController extends Controller
 
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . $token,
+                'Content-Type: application/json'
+            ],
             CURLOPT_CUSTOMREQUEST => 'PUT',
             CURLOPT_POSTFIELDS => $payload
         ]);

@@ -14,7 +14,7 @@
   <!-- Left Section -->
   <div class="w-full md:w-1/2 flex flex-col justify-center px-8 py-12 bg-white">
     <div class="flex items-center mb-10">
-      <img src="<?= base_url('assets/images/default-profile.png') ?>" class="w-10 h-10 rounded-full mr-3 object-cover" alt="Logo">
+      <img src="<?= base_url('assets/images/Logo.png') ?>" class="w-10 h-10 rounded-full mr-3 object-cover" alt="Logo">
       <span class="text-2xl font-bold text-gray-800">SIMS PPOB</span>
     </div>
 
@@ -38,38 +38,61 @@
 
     <form action="<?= base_url('registration/register') ?>" method="post" class="space-y-4">
 
-      <div>
-        <input type="email" name="email" value="<?= old('email') ?>" placeholder="Masukkan email anda"
-               class="w-full p-3 border <?= session('errors.email') ? 'border-red-500' : 'border-gray-300' ?> rounded">
-      </div>
-
-      <div>
-        <input type="text" name="first_name" value="<?= old('first_name') ?>" placeholder="Nama depan"
-               class="w-full p-3 border <?= session('errors.first_name') ? 'border-red-500' : 'border-gray-300' ?> rounded">
-      </div>
-
-      <div>
-        <input type="text" name="last_name" value="<?= old('last_name') ?>" placeholder="Nama belakang"
-               class="w-full p-3 border <?= session('errors.last_name') ? 'border-red-500' : 'border-gray-300' ?> rounded">
-      </div>
-
+      <!-- Email -->
       <div class="relative">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+          <i class="mdi mdi-email text-xl"></i>
+        </span>
+        <input type="email" name="email" value="<?= old('email') ?>" placeholder="Masukkan email anda"
+               class="w-full pl-10 p-3 border <?= session('errors.email') ? 'border-red-500' : 'border-gray-300' ?> rounded focus:outline-none focus:ring-2 focus:ring-red-400">
+      </div>
+
+      <!-- Nama Depan -->
+      <div class="relative">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+          <i class="mdi mdi-account text-xl"></i>
+        </span>
+        <input type="text" name="first_name" value="<?= old('first_name') ?>" placeholder="Nama depan"
+               class="w-full pl-10 p-3 border <?= session('errors.first_name') ? 'border-red-500' : 'border-gray-300' ?> rounded focus:outline-none focus:ring-2 focus:ring-red-400">
+      </div>
+
+      <!-- Nama Belakang -->
+      <div class="relative">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+          <i class="mdi mdi-account text-xl"></i>
+        </span>
+        <input type="text" name="last_name" value="<?= old('last_name') ?>" placeholder="Nama belakang"
+               class="w-full pl-10 p-3 border <?= session('errors.last_name') ? 'border-red-500' : 'border-gray-300' ?> rounded focus:outline-none focus:ring-2 focus:ring-red-400">
+      </div>
+
+      <!-- Password -->
+      <div class="relative">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+          <i class="mdi mdi-lock text-xl"></i>
+        </span>
         <input type="password" name="password" id="password" placeholder="Buat password"
-               class="w-full p-3 border <?= session('errors.password') ? 'border-red-500' : 'border-gray-300' ?> rounded">
+               class="w-full pl-10 pr-10 p-3 border <?= session('errors.password') ? 'border-red-500' : 'border-gray-300' ?> rounded focus:outline-none focus:ring-2 focus:ring-red-400">
         <button type="button" id="togglePassword" class="absolute right-3 top-3 text-gray-500">
           <i class="mdi mdi-eye text-2xl"></i>
         </button>
       </div>
 
+      <!-- Konfirmasi Password -->
       <div class="relative">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+          <i class="mdi mdi-lock text-xl"></i>
+        </span>
         <input type="password" name="confirm_password" id="confirm_password" placeholder="Konfirmasi password"
-               class="w-full p-3 border <?= session('errors.confirm_password') ? 'border-red-500' : 'border-gray-300' ?> rounded">
+               class="w-full pl-10 pr-10 p-3 border <?= session('errors.confirm_password') ? 'border-red-500' : 'border-gray-300' ?> rounded focus:outline-none focus:ring-2 focus:ring-red-400">
         <button type="button" id="toggleConfirmPassword" class="absolute right-3 top-3 text-gray-500">
           <i class="mdi mdi-eye text-2xl"></i>
         </button>
       </div>
 
-      <button type="submit" class="w-full bg-red-500 text-white font-bold py-3 rounded hover:bg-red-600 transition">Registrasi</button>
+      <!-- Tombol Submit -->
+      <button type="submit" class="w-full bg-red-500 text-white font-bold py-3 rounded hover:bg-red-600 transition">
+        Registrasi
+      </button>
 
     </form>
 
