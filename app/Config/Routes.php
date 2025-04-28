@@ -11,24 +11,20 @@ $routes->get('login', 'LoginController::index');
 $routes->post('login', 'LoginController::authenticate');
 $routes->get('logout', 'LoginController::logout');
 
-// Homepage
 $routes->get('home', 'HomepageController::index');
 $routes->get('service/(:segment)', 'HomepageController::service/$1');
 
-// Pembayaran
 $routes->get('pembayaran/(:segment)', 'PembayaranController::index/$1');
 $routes->post('pembayaran/submit', 'PembayaranController::submit');
 
-// Topup
-$routes->get('topup', 'TopupController::index');
+$routes->get('topup', 'TopUpController::index');
 $routes->post('topup/topUp', 'TopupController::topUp');
 
-// History
 $routes->get('history', 'HistoryController::index');
 $routes->get('history/loadMoreHistory', 'HistoryController::loadMoreHistory');
 
-// Profile
+
 $routes->get('profile', 'ProfileController::index');
 $routes->get('profile/edit', 'ProfileController::edit');
 $routes->post('profile/update', 'ProfileController::updateProfile');
-$routes->post('profile/image', 'ProfileController::updateProfileImage'); // tetap POST, override PUT di JS
+$routes->post('profile/image', 'ProfileController::updateProfileImage');
