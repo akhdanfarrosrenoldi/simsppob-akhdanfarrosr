@@ -18,7 +18,7 @@ $routes->get('pembayaran/(:segment)', 'PembayaranController::index/$1');
 $routes->post('pembayaran/submit', 'PembayaranController::submit');
 
 $routes->get('topup', 'TopUpController::index');
-$routes->post('topup/topUp', 'TopupController::topUp');
+$routes->post('topup/topUp', 'TopUpController::topUp');
 
 $routes->get('history', 'HistoryController::index');
 $routes->get('history/loadMoreHistory', 'HistoryController::loadMoreHistory');
